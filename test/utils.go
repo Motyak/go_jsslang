@@ -10,17 +10,17 @@ func die(msg any) bool {
     if err != nil {
         fmt.Fprintln(os.Stderr, err)
     }
-    panic(msg)
+    panic(msg) // TODO: do our own
 }
 
 func ASSERT(test bool) {
     if test == false {
-        panic("Assertion failed")
+        panic("Assertion failed") // TODO: do our own
     }
 }
 
 func SHOULD_NOT_HAPPEN() bool {
-    panic("Should not happen")
+    panic("Should not happen") // TODO: do our own
 }
 
 func stdin() []byte {

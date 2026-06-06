@@ -11,12 +11,16 @@ func main() {
     //             s
     // `)
 
+    // str := tommy_str(`
+    //     \s\s
+    // `)
+
     str := tommy_str(`
        |-> SquareBracketsGroup
        |  -> Term #1
-       |    -> Word: Atom: `+"`"+`fds`+"`"+`
+       |    -> Word: Atom: \qfds\q
        |  -> Term #2
-       |    -> Word: Atom: `+"`"+`sdf`+"`"+`
+       |    -> Word: Atom: \qsdf\q
     `)
 
     println("`" + str + "`")
