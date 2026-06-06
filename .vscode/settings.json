@@ -1,0 +1,4 @@
+{
+    "go.useLanguageServer": false,
+    "problems.visibility": false,
+}

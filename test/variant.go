@@ -110,7 +110,7 @@ func doit(val value_t) {
         },
 
         Float: func(float_ value_t__Float) {
-            fmt.Printf("processing value_t__Float: %f", float_)
+            fmt.Printf("processing value_t__Float: %f\n", float_)
         },
 
         Str: func(str_ value_t__Str) {
@@ -125,23 +125,4 @@ func doit(val value_t) {
             fmt.Printf("processing value_t__Map: %s\n", map_)
         },
     })
-}
-
-func main() {
-    // var val = value_t{byte(123)}
-    // var val = value_t{bool(true)}
-    // var val = value_t{[]value_t{value_t{1}, value_t{2}, value_t{3}}}
-    // var val = value_t{map[value_t]value_t{
-    //     value_t{"a"}: value_t{1},
-    // }}
-    var val = value_t{nil}
-    doit(val)
-    
-    if val.is_nil() {
-        return
-    }
-    if val.holds(Bool) {
-        var bool_ = val.variant.(value_t__Bool)
-        fmt.Printf("bool: %t\n", bool_)
-    }
 }
