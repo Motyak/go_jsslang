@@ -1,0 +1,200 @@
+
+
+fichier yaml qui doit être converti
+en json
+
+pour moi le yaml ca doit être écrit
+à la main et converti en json,
+il ne faut jamais générer du yaml.
+
+il ne faut utiliser qu'un subset
+de YAML qui est compatible avec JSON
+  -> en gros n'utiliser yaml que pour
+     du syntax-sugar, intentional
+     code
+     
+---
+
+Faire un parseur d'un subset de YAML
+et subset de json5:
+  -> doit pouvoir être convertissable
+     en RFC JSON minified (shebang
+     to output its minified ver.)
+
+Strict whitespace use, part of the grammar,
+no arbitrary number of space for alignment.
+  -> we will have problems with comments
+     then
+    => abort
+
+4 space indentation
+
+converter written in examplary,
+procedural, perl5
+  -> first parse to a tree-like structure
+     (json struct), basically hashes and arrays
+     in perl
+  (report error in stderr if any)
+  -> then visit that struct and generate
+     the minified JSON RFC code
+     (or prettified)
+
+# minified output
+./myfile.fds
+
+- support line comment / side comment
+  with //
+- support inline comment with /**/
+  (multiline comments not allowed,
+   commenting block should be done
+   with single line comments)
+
+
+
+
+
+===========
+
+jss
+  -> json with syntax sugar
+     (inspired from yaml
+      and json5)
+
+we do NOT allow yaml-style syntax inside
+json
+
+let's make the indentation
+strict 4 spaces and the other
+whitespaces we don't care
+(so leading/traling spaces are ok,
+ but 5 leading spaces means +1 indent,
+ and we need correct indent so..)
+
+language for describing data of the same
+kind as JSON ($nil, $true, $false,
+number, string, list, map)
+
+I want to use Perl because of its
+regexes embedded in the language,
+makes most of the "hard problem"
+logic very simple / concise.
+
+Uniquement la syntaxe inline de JSON
+n'est autorisée (en gros la syntaxe
+YAML-like est à privilégier pour des
+grosse structures multilignes MAIS
+le JSON inline permet d'écrire certaines
+choses de manière plus concise.
+
+---
+
+Ca pourrait être un bon exercice d'écrire le programme
+en GO ? Du coup, la suite des variants avec letsgoo
+
+$nil => null
+null => "null"
+
+$true $false => true false
+true false => "true" "false"
+
+0xFF 0o777 0b01'0101 -123 -2^8 -123.456 -1/3 => <associated floating-point numbers>
+
+fds "fds\nsdf" => "fds" "fds\nsdf"
+
+```
+    multiline string
+    two lines
+``` => "multiline string\ntwo lines"
+
+[a, b, c] => ["a", "b", "c"]
+
+{a: 1, b: 2} => {"a":1, "b":2}
+
+- a
+- b
+=> ["a", "b"]
+
+obj:
+    - a
+    - b
+=> {"obj": ["a", "b"]}
+
+---
+
+donc en gros dans le langage y'aura 2 parties:
+  -> 1 partie inline JSON
+    -> $nil, $true, $false
+    -> nombres
+    -> fds "fds\nsdf"
+    -> [1, 2, 3]
+    -> {a: 1, b: 2}
+  -> et 1 partie multiline YAML
+    -> map et list
+
+
+
+
+
+
+
+
+
+
+=====
+
+
+jss
+  -> json with syntax sugar
+     (inspired from json5 and yaml)
+
+The all point of this language is to generate JSON
+from a language that allows one to write
+JSON-like structured data in the most concise
+and convenient way.
+
+This kind of files should be written by hand,
+intentionally, rather than following
+"good practices/conventions", and should
+absolutely not be generated programatically.
+
+---
+
+The syntax borrows ideas from json5:
+  -> strings can be barewords (meaning they
+     don't need to be quoted) as long as
+     it doesn't conflict with the language
+  -> single line comment and side comment
+  -> inline comment and multiline comment
+  -> numbers may be of various forms
+     (hexadecimal, octal, binary, fraction,
+      power, periodic decimals, ..)
+      
+The syntax borrows ideas from yaml:
+  -> multiline structure such as lists
+     and maps are written using YAML-like
+     syntax
+  -> inline json as terminals
+
+Basically start from the leafs with inline JSON,
+and then build with yaml and nested yaml.
+
+- `,` + space => list/map separator
+- `:` + space => key-val separator
+
+Metacharacters (not allowed in symbols):
+  -> {}
+  -> []
+  -> (space)
+  -> (newline)
+
+  
+  
+  
+  
+      
+      
+      
+      
+      
+      
+
