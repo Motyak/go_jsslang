@@ -1,8 +1,12 @@
 package main
 
-import "fmt"
-import "io"
-import "os"
+import (
+    "fmt"
+    "io"
+    "os"
+    "runtime"
+    "strings"
+)
 
 var err error
 
@@ -10,17 +14,68 @@ func die(msg any) bool {
     if err != nil {
         fmt.Fprintln(os.Stderr, err)
     }
-    panic(msg) // TODO: do our own
+    _, _, _, ok := runtime.Caller(1)
+    if !ok { // fallback
+        panic(msg)
+    }
+
+    fmt.Fprintf(os.Stderr, "die(): %s\n\n", msg)
+    buf := make([]byte, 4096)
+    n := runtime.Stack(buf, false)
+    str := string(buf[:n])
+    str = strings.ReplaceAll(str, "\t", "  ")
+    lines := strings.Split(str, "\n")
+    if len(lines) > 3 {
+        str = strings.Join(append(lines[0:1], lines[3:]...), "\n")
+    }
+    fmt.Fprintln(os.Stderr, str)
+    os.Exit(1)
+    return false
 }
 
 func ASSERT(test bool) {
-    if test == false {
-        panic("Assertion failed") // TODO: do our own
+    if test == true {
+        return
     }
+
+    _, filename, lineno, ok := runtime.Caller(1)
+
+    if !ok { // fallback
+        panic("Assertion failed")
+    }
+
+    fmt.Fprintf(os.Stderr, "Assertion failed at:\n  %s:%d\n\n", filename, lineno)
+    buf := make([]byte, 4096)
+    n := runtime.Stack(buf, false)
+    str := string(buf[:n])
+    str = strings.ReplaceAll(str, "\t", "  ")
+    lines := strings.Split(str, "\n")
+    if len(lines) > 3 {
+        str = strings.Join(append(lines[0:1], lines[3:]...), "\n")
+    }
+    fmt.Fprintln(os.Stderr, str)
+    os.Exit(1)
 }
 
-func SHOULD_NOT_HAPPEN() bool {
-    panic("Should not happen") // TODO: do our own
+func SHOULD_NOT_HAPPEN() {
+    _, filename, lineno, ok := runtime.Caller(1)
+
+    if !ok { // fallback
+        panic("Should not happen")
+    }
+
+
+    fmt.Fprintf(os.Stderr, "`Should not happen` raised at:\n  %s:%d\n\n", filename, lineno)
+    buf := make([]byte, 4096)
+    n := runtime.Stack(buf, false)
+    str := string(buf[:n])
+    str = strings.ReplaceAll(str, "\t", "  ")
+    lines := strings.Split(str, "\n")
+    if len(lines) > 3 {
+        str = strings.Join(append(lines[0:1], lines[3:]...), "\n")
+    }
+    fmt.Fprintln(os.Stderr, str)
+    os.Exit(1)
 }
 
 func stdin() []byte {

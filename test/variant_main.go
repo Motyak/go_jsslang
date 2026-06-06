@@ -1,7 +1,9 @@
 //go:build variant_main
 package main
 
-import "fmt"
+import (
+    "fmt"
+)
 
 func main() {
     // var val = value_t{float64(123)}
