@@ -19,7 +19,7 @@ func ASSERT(test bool) {
     }
 }
 
-func SHOULD_NOT_HAPPEN() {
+func SHOULD_NOT_HAPPEN() bool {
     panic("Should not happen")
 }
 

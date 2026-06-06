@@ -3,8 +3,10 @@ package main
 
 func main() {
 
-    // test 1
+    // $nil
     {
+        tommy_str(`
+        `)
         ASSERT (false)
     }
 

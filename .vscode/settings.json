@@ -1,4 +1,14 @@
 {
     "go.useLanguageServer": false,
     "problems.visibility": false,
+
+    /* need this because go creator is a genius */
+    "[go]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.formatOnSave": false,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "false"
+        }
+    },
 }
