@@ -8,3 +8,13 @@ go run main/*.go
 
 # build the main
 GO111MODULE=off go build -o main.elf ./main/
+
+--- for convenience
+
+source env.sh
+
+gorun test/tests.go
+gorun test/tommystr
+
+cd test
+go run tommystr

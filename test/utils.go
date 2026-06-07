@@ -29,7 +29,7 @@ func die(msg any) bool {
         str = strings.Join(append(lines[0:1], lines[3:]...), "\n")
     }
     fmt.Fprintln(os.Stderr, str)
-    os.Exit(1)
+    os.Exit(2)
     return false
 }
 
@@ -54,7 +54,7 @@ func ASSERT(test bool) {
         str = strings.Join(append(lines[0:1], lines[3:]...), "\n")
     }
     fmt.Fprintln(os.Stderr, str)
-    os.Exit(1)
+    os.Exit(2)
 }
 
 func SHOULD_NOT_HAPPEN() {
@@ -75,7 +75,7 @@ func SHOULD_NOT_HAPPEN() {
         str = strings.Join(append(lines[0:1], lines[3:]...), "\n")
     }
     fmt.Fprintln(os.Stderr, str)
-    os.Exit(1)
+    os.Exit(2)
 }
 
 func stdin() []byte {
