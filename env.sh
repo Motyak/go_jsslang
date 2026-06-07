@@ -2,6 +2,8 @@
 
 function gorun {
     local file="$1"
+    local args="${@:2}"
+
     file="./$file"
     [[ "$file" =~ _main\.go$ ]] || {
         [ -f "${file%.go}_main.go" ] && {
@@ -12,7 +14,7 @@ function gorun {
     local dir="${file%/*}/"
     local filename="${file##*/}"
 
-    cmd="GO111MODULE=off go run -tags ${filename%.go} $dir"
+    cmd="GO111MODULE=off go run -tags ${filename%.go} $dir${args:+ }$args"
     ((DRYRUN)) && >&2 echo -n "NOT "
     >&2 echo "Executing cmd \`$cmd\`"
     ((DRYRUN)) && return 0

@@ -65,10 +65,28 @@ func TEST_CASE(name string, tags string, test func()) dummy {
 }
 
 func main() {
+    /* filter test_cases based on tag args */
+    {
+        filtered := test_cases[:0]
+        for _, test_case := range test_cases {
+            should_append := true
+            for _, tag_arg := range os.Args[1:] {
+                if !strings.Contains(test_case.tags, "[" + tag_arg + "]") {
+                    should_append = false
+                    break
+                }
+            }
+            if should_append {
+                filtered = append(filtered, test_case)
+            }
+        }
+        test_cases = filtered
+    }
+
     total_tests := len(test_cases)
     for i, test_case := range test_cases {
         fmt.Printf("%d/%d passed tests\n", i, total_tests)
-        println("=== " + test_case.name + " ===")
+        println("=== " + test_case.name + " " + test_case.tags + " ===")
         test_case.test()
     }
     fmt.Printf("OK %d/%d passed tests\n", total_tests, total_tests)
