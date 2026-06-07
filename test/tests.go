@@ -10,14 +10,20 @@ import (
 )
 
 var _ =
-TEST_CASE("test name", "[test-1111][err]", func(){
-    println("this is test 1")
+TEST_CASE("$nil", "[test-1111]", func(){
+    input := "$nil"
+    expect := "null"
+
+    input_iss := strings.NewReader(input)
+    output := parse(input_iss)
+    output_str := codegen_(output)
+    REQUIRE_STR_EQ (output_str, expect)
 })
 
 var _ =
-TEST_CASE("test name 2", "[test-1112][err]", func(){
+TEST_CASE("test name 2", "[test-1112]", func(){
     println("this is test 2")
-    REQUIRE (false)
+    // REQUIRE (false)
     // ASSERT (false)
 })
 
@@ -25,28 +31,88 @@ TEST_CASE("test name 2", "[test-1112][err]", func(){
 // test execution logic
 ////////////////////////////////////////////////////////////
 
-func REQUIRE(test bool) {
-    if test == true {
-        return
-    }
+// func REQUIRE(test bool) {
+//     if test == true {
+//         return
+//     }
 
-    _, filename, lineno, ok := runtime.Caller(1)
+//     _, filename, lineno, ok := runtime.Caller(1)
 
-    if !ok { // fallback
-        panic("Requirement unmet")
-    }
+//     if !ok { // fallback
+//         panic("Requirement unmet")
+//     }
 
-    fmt.Fprintf(os.Stderr, "Requirement unmet at:\n  %s:%d\n\n", filename, lineno)
-    buf := make([]byte, 4096)
-    n := runtime.Stack(buf, false)
-    str := string(buf[:n])
-    str = strings.ReplaceAll(str, "\t", "  ")
-    lines := strings.Split(str, "\n")
-    if len(lines) > 3 {
-        str = strings.Join(append(lines[0:1], lines[3:]...), "\n")
-    }
-    fmt.Fprintln(os.Stderr, str)
-    os.Exit(1)
+//     fmt.Fprintf(os.Stderr, "Requirement unmet at:\n  %s:%d\n\n", filename, lineno)
+//     buf := make([]byte, 4096)
+//     n := runtime.Stack(buf, false)
+//     str := string(buf[:n])
+//     str = strings.ReplaceAll(str, "\t", "  ")
+//     lines := strings.Split(str, "\n")
+//     if len(lines) > 3 {
+//         str = strings.Join(append(lines[0:1], lines[3:]...), "\n")
+//     }
+//     fmt.Fprintln(os.Stderr, str)
+//     os.Exit(1)
+// }
+
+func REQUIRE_STR_EQ(actual string, expected string) {
+	if actual == expected {
+		return
+	}
+
+	_, filename, lineno, ok := runtime.Caller(1)
+	if !ok {
+		panic("Requirement unmet")
+	}
+
+	// 1. Generate a character-by-character visual diff
+	var diff strings.Builder
+	runesActual := []rune(actual)
+	runesExpected := []rune(expected)
+	maxLen := len(runesActual)
+	if len(runesExpected) > maxLen {
+		maxLen = len(runesExpected)
+	}
+
+	diff.WriteString("--- String Mismatch Details ---\n")
+	diff.WriteString(fmt.Sprintf("Actual Length:   %d\nExpected Length: %d\n\n", len(actual), len(expected)))
+	diff.WriteString("Index | Actual Char | Expected Char | Match?\n")
+	diff.WriteString("--------------------------------------------\n")
+
+	for i := 0; i < maxLen; i++ {
+		actChar := "<EOF>"
+		expChar := "<EOF>"
+		matchMarker := "❌"
+
+		if i < len(runesActual) {
+			actChar = fmt.Sprintf("%q", string(runesActual[i]))
+		}
+		if i < len(runesExpected) {
+			expChar = fmt.Sprintf("%q", string(runesExpected[i]))
+		}
+		if i < len(runesActual) && i < len(runesExpected) && runesActual[i] == runesExpected[i] {
+			matchMarker = "✓"
+		}
+
+		diff.WriteString(fmt.Sprintf("%5d | %11s | %13s | %s\n", i, actChar, expChar, matchMarker))
+	}
+	diff.WriteString("--------------------------------------------\n")
+
+	// 2. Print metadata, error diff, and cleaned stack trace
+	fmt.Fprintf(os.Stderr, "Requirement unmet at:\n  %s:%d\n\n", filename, lineno)
+	fmt.Fprintln(os.Stderr, diff.String())
+
+	buf := make([]byte, 4096)
+	n := runtime.Stack(buf, false)
+	str := string(buf[:n])
+	str = strings.ReplaceAll(str, "\t", "  ")
+	lines := strings.Split(str, "\n")
+	if len(lines) > 3 {
+		str = strings.Join(append(lines[0:1], lines[3:]...), "\n")
+	}
+	fmt.Fprintln(os.Stderr, str)
+
+	os.Exit(1)
 }
 
 type dummy struct {}

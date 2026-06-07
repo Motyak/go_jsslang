@@ -6,20 +6,23 @@ import (
     "os"
     "runtime"
     "strings"
+    "bufio"
 )
 
 var err error
 
 func die(msg any) bool {
+    fmt.Fprintf(os.Stderr, "die(): %s\n", msg)
     if err != nil {
         fmt.Fprintln(os.Stderr, err)
     }
+    fmt.Fprintln(os.Stderr)
+
     _, _, _, ok := runtime.Caller(1)
     if !ok { // fallback
         panic(msg)
     }
 
-    fmt.Fprintf(os.Stderr, "die(): %s\n\n", msg)
     buf := make([]byte, 4096)
     n := runtime.Stack(buf, false)
     str := string(buf[:n])
@@ -64,7 +67,6 @@ func SHOULD_NOT_HAPPEN() {
         panic("Should not happen")
     }
 
-
     fmt.Fprintf(os.Stderr, "`Should not happen` raised at:\n  %s:%d\n\n", filename, lineno)
     buf := make([]byte, 4096)
     n := runtime.Stack(buf, false)
@@ -88,4 +90,21 @@ func stdin() []byte {
 func Byte(c string) byte {
     _ = len(c) == 1 || die("Byte() arg should be a 1-char string")
     return c[0]
+}
+
+func peekStr(reader *bufio.Reader, str string) bool {
+    var peeked []byte
+    peeked, err = reader.Peek(len(str))
+    if err == io.EOF {
+        return false
+    }
+    _ = err == nil || die("")
+    match := true
+    for i, c := range peeked {
+        if c != str[i] {
+            match = false
+            break
+        }
+    }
+    return match
 }

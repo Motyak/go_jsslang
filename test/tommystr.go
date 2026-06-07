@@ -28,14 +28,14 @@ func tommy_str(raw_str string) string {
         for currLineNo != lineno - 1 {
             currLineNo++
             _, err = reader.ReadString('\n')
-            ASSERT (err == nil)
+            _ = err == nil || die("")
         }
 
         spaces := 0
         for true {
             var c []byte
             c, err = reader.Peek(1)
-            ASSERT (err == nil)
+            _ = err == nil || die("")
             if c[0] != ' ' && c[0] != '|' {
                 break
             }
@@ -57,7 +57,7 @@ func tommy_str(raw_str string) string {
         i := 0
         reader := bytes.NewBuffer([]byte(raw_str))
         _, err = reader.ReadString('\n') // initial newline
-        ASSERT (err == nil)
+        _ = err == nil || die("")
         for true {
             i += 1
             currLine, _ = reader.ReadString('\n')
