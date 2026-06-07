@@ -9,10 +9,10 @@ import (
 
 func main() {
     {
-        oss := bytes.NewBufferString("")
-        val := value_t{float64(123)}
-        codegen(oss, val)
-        print(oss.String())
+        // oss := bytes.NewBufferString("")
+        // val := value_t{float64(123)}
+        // codegen(oss, val)
+        // print(oss.String())
     }
 
     {

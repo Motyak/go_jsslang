@@ -13,7 +13,8 @@ func codegen_(val value_t) string {
 }
 
 func codegen(writer io.Writer, val value_t) {
-    visit(val, value_t__Visitor{
+    var visitor value_t__Visitor
+    visitor = value_t__Visitor{
         Nil: func() {
             fmt.Fprintf(writer, "processing value_t__Nil\n")
         },
@@ -37,5 +38,6 @@ func codegen(writer io.Writer, val value_t) {
         Map: func(map_ value_t__Map) {
             fmt.Fprintf(writer, "processing value_t__Map: %s\n", map_)
         },
-    })
+    }
+    visit(val, visitor)
 }

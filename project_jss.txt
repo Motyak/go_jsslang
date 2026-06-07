@@ -178,23 +178,112 @@ The syntax borrows ideas from yaml:
 Basically start from the leafs with inline JSON,
 and then build with yaml and nested yaml.
 
-- `,` + space => list/map separator
+- `,` + space => list/map (arg) separator
 - `:` + space => key-val separator
 
 Metacharacters (not allowed in symbols):
   -> {}
   -> []
+  -> "
+  -> `
   -> (space)
   -> (newline)
 
   
-  
-  
-  
-      
-      
-      
-      
-      
-      
+============
 
+on autorise uniquement les strings en key
+(contrairement à YAML qui autorise les nombres unquoted,
+et booleans etc..)
+  -> il faut quote si on veut mettre un nombre ou autre
+     special symbol ("true" ou "$true au lieu de $true,
+     pareil pour $false et $nil)
+    -> pareil pour les lists, maps, etc..
+
+Il faut absolument 2 spaces d'indent, sinon la syntaxe yaml
+perd beaucoup de son intérêt, exemple:
+# A list of 2 users
+users:
+  - name: Alice    # New item starts here
+    age: 23
+  - name: Bob      # Second item starts here
+    age: 26
+
+---
+
+features :
+  -> indentation-aware multiline raw string
+  -> line comments and multiline comments
+  -> quotes around strings may be omitted
+     in most cases
+  -> various forms of numerals (for numbers)
+  -> 
+      
+---
+
+json5 is the best format because you can
+edit it easily (and it's still very readable,
+also no traps since everything is either quoted
+or grouped nicely)
+
+like compare these two:
+
+[
+
+{
+    "file_pattern": "*.csv",
+    "columns": [
+        // either numbers (index) or strings
+        "First Name",
+        "City",
+    ],
+},
+
+{
+    "file_pattern": "*.xml",
+    "paths": [
+        "ShipRegion", // any path that ends with .ShipRegion, or ShipRegion
+        "Root.Customers.Customer.Phone",
+    ],
+},
+
+{
+    "file_pattern": "*.json",
+    "paths": [
+        // "a.b.c",
+        // "a.b.d",
+        // "e",
+    ],
+},
+
+]
+
+AND
+
+- file_pattern: *.csv
+  columns: [First Name, City]
+    
+- file_pattern: *.xml
+  paths: [ShipRegion, RootCustomers.Customer.Phone]
+    
+- file_pattern: *.json
+  paths: []
+
+OR
+
+- file_pattern: *.csv
+  columns:
+    /* either numbers (index) or strings */
+    - First Name
+    - City
+
+- file_pattern: *.xml
+  paths:
+    - ShipRegion // any path that ends with .ShipRegion, or ShipRegion
+    - Root.Customers.Customer.Phone
+    
+- file_pattern: *.json
+  paths:
+    // - a.b.c
+    // - a.b.d
+    // - e
